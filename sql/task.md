@@ -31,10 +31,12 @@ CREATE INDEX idx_locations_timestamp ON locations (time_stamp);
 4. Напишите SQL-запрос, который выведет информацию о врачах, которые 
 в последние 10 минут переместились более чем на 1 км.
 
-[SELECT d.name
+SELECT d.name, SUM(l.distance) AS total_distance
 FROM doctors d
-LEFT JOIN locations l ON d.id = l.doctor_id
-WHERE l.doctor_id IS NULL OR l.time_stamp < datetime('now', '-10 minutes');](select_doctors_having_over_1km_for_10min.sql)
+JOIN locations l ON d.id = l.doctor_id
+WHERE l.time_stamp >= NOW() - INTERVAL '10 minutes'
+GROUP BY d.name
+HAVING SUM(l.distance) > 1000;
 
 5. Напишите SQL-запрос, который выведет всех врачей, 
 для которых нет информации об их перемещениях за последний час.
